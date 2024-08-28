@@ -37,7 +37,7 @@ jobs:
           # androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
           # androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
           # androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
-          androidTargetSdkVersion: AndroidApiLevel35
+          androidTargetSdkVersion: AndroidApiLevel34
 
       # Subir artefacto
       - name: Upload Android build artifact
