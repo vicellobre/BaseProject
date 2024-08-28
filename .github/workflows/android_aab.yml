@@ -7,13 +7,24 @@ jobs:
     name: Build For Android Platform
     runs-on: ubuntu-latest
     steps:
-      - uses: jlumbroso/free-disk-space@v1.3.1
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v3
+      # Liberar espacio
+      - name: Check free disk space
+        uses: jlumbroso/free-disk-space@v1.3.1
+
+      # Clonar repositorio
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Almacenar en cache la carpeta Library
+      - name: Cache Android AAB
+        uses: actions/cache@v4
         with:
           path: Library/Android_AAB
           key: Library-Android
-      - uses: game-ci/unity-builder@v4
+
+      # Generar build
+      - name: Build Unity project for Android
+        uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -27,7 +38,10 @@ jobs:
           # androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
           # androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
           androidTargetSdkVersion: AndroidApiLevel35
-      - uses: actions/upload-artifact@v3
+
+      # Subir artefacto
+      - name: Upload Android build artifact
+        uses: actions/upload-artifact@v4
         with:
           name: build-Android
           path: build/Android
