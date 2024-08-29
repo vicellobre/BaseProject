@@ -39,7 +39,7 @@ jobs:
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*;dontClear'
       - name: Verificar si el directorio existe
         run: |
-          if [ ! -d "mi-directorio" ]; then
+          if [ ! -d ${{ steps.tests.outputs.coveragePath }}; then
             echo "El directorio no existe. Creándolo..."
             mkdir mi-directorio
           else
