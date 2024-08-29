@@ -39,6 +39,7 @@ jobs:
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*;dontClear'
       - name: Listar archivos y directorios
         run: ls -l
+        
       - name: Verificar si el directorio existe
         run: |
           if [ ! -d ${{ steps.tests.outputs.coveragePath }} ]; then
@@ -47,17 +48,21 @@ jobs:
           else
             echo "El directorio ya existe."
           fi
+          
+      - name: Cambiar permisos de archivos de cobertura
+        run: sudo chmod -R a+r "${{ steps.tests.outputs.coveragePath }}"
+        
       - name: Listar archivos y directorios x2
         run: ls -l ${{ steps.tests.outputs.coveragePath }}
+      - run: echo "$FULL_COVERAGE_RESULTS_PATH -- COVERAGE_RESULTS_PATH -- ${{ steps.tests.outputs.artifactsPath }}"
       # Test Artifacts
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
+          
       # Coverage Artifacts
-      - name: Cambiar permisos de archivos de cobertura
-        run: sudo chmod -R 755 ${{ steps.tests.outputs.coveragePath }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
