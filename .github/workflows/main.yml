@@ -54,7 +54,7 @@ jobs:
         
       - name: Listar archivos y directorios x2
         run: ls -l ${{ steps.tests.outputs.coveragePath }}
-      - run: echo "$FULL_COVERAGE_RESULTS_PATH -- COVERAGE_RESULTS_PATH -- ${{ steps.tests.outputs.artifactsPath }}"
+      - run: echo "$FULL_COVERAGE_RESULTS_PATH -- $COVERAGE_RESULTS_PATH -- ${{ steps.tests.outputs.artifactsPath }}"
       # Test Artifacts
       - uses: actions/upload-artifact@v4
         if: always()
