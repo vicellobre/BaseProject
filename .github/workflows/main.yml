@@ -48,7 +48,7 @@ jobs:
             echo "El directorio ya existe."
           fi
       - name: Listar archivos y directorios x2
-        run: ls -l
+        run: ls -l ${{ steps.tests.outputs.coveragePath }}
       # Test Artifacts
       - uses: actions/upload-artifact@v4
         if: always()
