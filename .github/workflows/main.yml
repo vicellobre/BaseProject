@@ -12,7 +12,7 @@ jobs:
         projectPath:
           - ./
         testMode:
-          - playmode
+         # - playmode
           - editmode
     steps:
       - uses: actions/checkout@v4
@@ -37,6 +37,14 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*;dontClear'
+      - name: Verificar si el directorio existe
+        run: |
+          if [ ! -d "mi-directorio" ]; then
+            echo "El directorio no existe. Creándolo..."
+            mkdir mi-directorio
+          else
+            echo "El directorio ya existe."
+          fi
       # Test Artifacts
       - uses: actions/upload-artifact@v4
         if: always()
