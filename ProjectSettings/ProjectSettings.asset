@@ -158,8 +158,8 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.LlobregatGames.baseproject
-    Standalone: com.LlobregatGames.BasePRoject
+    Android: com.LlobregatGames.BaseProject
+    Standalone: com.LlobregatGames.BaseProject
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -788,7 +788,7 @@ PlayerSettings:
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
-    Android: 0
+    Android: 1
     Standalone: 1
   il2cppCompilerConfiguration: {}
   il2cppCodeGeneration: {}
