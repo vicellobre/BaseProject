@@ -17,13 +17,13 @@ jobs:
     steps:
       # Checkout
       - name: Clonando el repositorio
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
         with:
           lfs: true
           
       # Cache
       - name: Almacenando Library en cache
-      - uses: actions/cache@v4
+        uses: actions/cache@v4
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ matrix.projectPath }}
@@ -32,7 +32,7 @@ jobs:
             
       # Test
       - name: Probando
-      - uses: game-ci/unity-test-runner@v4.3.1
+        uses: game-ci/unity-test-runner@v4.3.1
         id: tests
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -71,7 +71,7 @@ jobs:
         
       # Test Artifacts
       - name: Almacenar resultados de las pruebas
-      - uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Test results for ${{ matrix.testMode }}
@@ -79,7 +79,7 @@ jobs:
           
       # Coverage Artifacts
       - name: Almacenar resultados del CodeCoverage
-      - uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Coverage results for ${{ matrix.testMode }}
