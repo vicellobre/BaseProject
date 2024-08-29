@@ -37,14 +37,18 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*;dontClear'
+      - name: Listar archivos y directorios
+        run: ls -l
       - name: Verificar si el directorio existe
         run: |
-          if [ ! -d ${{ steps.tests.outputs.coveragePath }}]; then
+          if [ ! -d ${{ steps.tests.outputs.coveragePath }} ]; then
             echo "El directorio no existe. Creándolo..."
             mkdir mi-directorio
           else
             echo "El directorio ya existe."
           fi
+      - name: Listar archivos y directorios x2
+        run: ls -l
       # Test Artifacts
       - uses: actions/upload-artifact@v4
         if: always()
