@@ -12,7 +12,7 @@ jobs:
         projectPath:
           - ./
         testMode:
-          # - playmode
+          - playmode
           - editmode
           # - standalone
     steps:
