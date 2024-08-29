@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   buildForWindowsPlatform:
     name:  Build for Windows Platform
-    runs-on: windows-2022
+    runs-on: ubuntu-latest #windows-2022
     steps:
       # Checkout
       - name: Checkout repository
