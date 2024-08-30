@@ -30,6 +30,26 @@ jobs:
           restore-keys: |
             Library-
             
+      # Mostrar archivos de la raiz para ver si se encuentra la carpeta CodeCoverage
+      - name: Listar archivos y directorios
+        run: ls -l
+        
+      # Comprobar si existe la carpeta CodeCoverage
+      - name: Verificar si el directorio existe
+        run: |
+          if [ ! -d ${{ steps.tests.outputs.coveragePath }} ]; then
+            echo "El directorio no existe. Creándolo..."
+            mkdir ${{ steps.tests.outputs.coveragePath }}
+          else
+            echo "El directorio ya existe."
+          fi
+
+      # Intentar ver si es problema de permisos
+      - name: Cambiar permisos de archivos de cobertura
+        run: sudo chmod -R a+rw "${{ steps.tests.outputs.coveragePath }}"
+      - name: Cambiar permisos de archivos de cobertura a usuario
+        run: sudo chown -R $USER:$USER "${{ steps.tests.outputs.coveragePath }}"
+        
       # Test
       - name: Probando
         uses: game-ci/unity-test-runner@v4.3.1
@@ -49,22 +69,6 @@ jobs:
       # Mostrar archivos de la raiz para ver si se encuentra la carpeta CodeCoverage
       - name: Listar archivos y directorios
         run: ls -l
-
-      # Comprobar si existe la carpeta CodeCoverage
-      - name: Verificar si el directorio existe
-        run: |
-          if [ ! -d ${{ steps.tests.outputs.coveragePath }} ]; then
-            echo "El directorio no existe. Creándolo..."
-            mkdir mi-directorio
-          else
-            echo "El directorio ya existe."
-          fi
-
-      # Intentar ver si es problema de permisos
-      - name: Cambiar permisos de archivos de cobertura
-        run: sudo chmod -R a+rw "${{ steps.tests.outputs.coveragePath }}"
-      - name: Cambiar permisos de archivos de cobertura
-        run: sudo chmod -R a+rw "CodeCoverage"
       
       # Mostrar contenido de CodeCoverage
       - name: Listar archivos y directorios de CodeCoverage
@@ -74,18 +78,13 @@ jobs:
       - name: Listar archivos y directorios de editmode-artifacts
         run: ls -l ${{ steps.tests.outputs.artifactsPath }}
 
-      # Mostrar nombre de rutas
-      - name: Nombres de rutas
-        run: echo "${{ steps.tests.outputs.artifactsPath }} -- ${{ steps.tests.outputs.coveragePath }} "
-
-      # Mostrar nombre de rutas
-      - name: Mostrar contenido de la carpeta Report
+      # Mostrar lista de workspace-opencov
+      - name: Mostrar contenido de la carpeta opencov
         run: ls -l ${{ steps.tests.outputs.coveragePath }}/workspace-opencov/
 
-        
-      # Mostrar nombre de rutas
-      - name: Mostrar contenido de la carpeta Report
-        run: ls -l ${{ steps.tests.outputs.coveragePath }}/Report/
+      # Mostrar ista de Report
+      # - name: Mostrar contenido de la carpeta Report
+      #   run: ls -l ${{ steps.tests.outputs.coveragePath }}/Report/
         
       # Test Artifacts
       - name: Almacenar resultados de las pruebas
