@@ -68,13 +68,21 @@ jobs:
       - name: Listar archivos y directorios de CodeCoverage
         run: ls -l ${{ steps.tests.outputs.coveragePath }}
 
-      # Mostrar contenido de CodeCoverage
+      # Mostrar contenido de editmode-artifacts
       - name: Listar archivos y directorios de editmode-artifacts
         run: ls -l ${{ steps.tests.outputs.artifactsPath }}
 
       # Mostrar nombre de rutas
       - name: Nombres de rutas
         run: echo "${{ steps.tests.outputs.artifactsPath }} -- ${{ steps.tests.outputs.coveragePath }} "
+
+      # Mostrar nombre de rutas
+      - name: Mostrar contenido de la carpeta Report
+        run: ls -l ${{ steps.tests.outputs.coveragePath }}/Report/
+
+      # Mostrar nombre de rutas
+      - name: Mostrar contenido de la carpeta Report
+        run: ls -l ${{ steps.tests.outputs.coveragePath }}/workspace-opencov/
         
       # Test Artifacts
       - name: Almacenar resultados de las pruebas
@@ -90,4 +98,4 @@ jobs:
         if: always()
         with:
           name: Coverage results for ${{ matrix.testMode }}
-          path: ${{ steps.tests.outputs.coveragePath }}/Report/
+          path: ./${{ steps.tests.outputs.coveragePath }}/Report/
