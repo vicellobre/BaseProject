@@ -67,6 +67,10 @@ jobs:
       # Mostrar contenido de CodeCoverage
       - name: Listar archivos y directorios de CodeCoverage
         run: ls -l ${{ steps.tests.outputs.coveragePath }}
+
+      # Mostrar contenido de CodeCoverage
+      - name: Listar archivos y directorios de editmode-artifacts
+        run: ls -l ${{ steps.tests.outputs.artifactsPath }}
         
       # Test Artifacts
       # - name: Almacenar resultados de las pruebas
