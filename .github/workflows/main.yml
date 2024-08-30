@@ -32,7 +32,7 @@ jobs:
             
       # Test
       - name: Probando
-        uses: game-ci/unity-test-runner@v4.3.1
+        uses: game-ci/unity-test-runner@v4
         id: tests
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
