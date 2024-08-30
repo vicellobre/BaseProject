@@ -62,7 +62,9 @@ jobs:
 
       # Intentar ver si es problema de permisos
       - name: Cambiar permisos de archivos de cobertura
-        run: sudo chmod -R a+r "${{ steps.tests.outputs.coveragePath }}"
+        run: sudo chmod -R a+rw "${{ steps.tests.outputs.coveragePath }}"
+      - name: Cambiar permisos de archivos de cobertura
+        run: sudo chmod -R a+rw "CodeCoverage"
       
       # Mostrar contenido de CodeCoverage
       - name: Listar archivos y directorios de CodeCoverage
@@ -78,11 +80,12 @@ jobs:
 
       # Mostrar nombre de rutas
       - name: Mostrar contenido de la carpeta Report
-        run: ls -l ${{ steps.tests.outputs.coveragePath }}/Report/
+        run: ls -l ${{ steps.tests.outputs.coveragePath }}/workspace-opencov/
 
+        
       # Mostrar nombre de rutas
       - name: Mostrar contenido de la carpeta Report
-        run: ls -l ${{ steps.tests.outputs.coveragePath }}/workspace-opencov/
+        run: ls -l ${{ steps.tests.outputs.coveragePath }}/Report/
         
       # Test Artifacts
       - name: Almacenar resultados de las pruebas
