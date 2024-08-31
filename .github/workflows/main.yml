@@ -104,12 +104,12 @@ jobs:
       #   run: ls -l ${{ steps.tests.outputs.coveragePath }}
 
       # Mostrar contenido de editmode-artifacts
-      # - name: Listar archivos y directorios de editmode-artifacts
-      #   run: ls -l ${{ steps.tests.outputs.artifactsPath }}
+      - name: Listar archivos y directorios de editmode-artifacts
+        run: ls -l ${{ steps.tests.outputs.artifactsPath }}
         
       # Mostrar contenido de CodeCoverage
-      # - name: Listar archivos y directorios de CodeCoverage
-      #   run: ls -l ${{ steps.tests.outputs.coveragePath }}
+      - name: Listar archivos y directorios de CodeCoverage
+        run: ls -l ${{ steps.tests.outputs.coveragePath }}
 
       # Mostrar lista de workspace-opencov
       # - name: Mostrar contenido de la carpeta opencov
