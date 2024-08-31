@@ -90,42 +90,42 @@ jobs:
       - name: Ver permisos de la carpeta editmode
         run: stat ${{ steps.tests.outputs.artifactsPath }}
         
-      # Intentar ver si es problema de permisos
-      - name: Cambiar permisos de archivos de cobertura a usuario
-        run: sudo chown -R $USER:$USER "${{ steps.tests.outputs.coveragePath }}"
+      # # Intentar ver si es problema de permisos
+      # - name: Cambiar permisos de archivos de cobertura a usuario
+      #   run: sudo chown -R $USER:$USER "${{ steps.tests.outputs.coveragePath }}"
       
-      - name: Ver permisos de la carpeta codeCoverage x2
-        run: ls -l ${{ steps.tests.outputs.coveragePath }}
+      # - name: Ver permisos de la carpeta codeCoverage x2
+      #   run: ls -l ${{ steps.tests.outputs.coveragePath }}
         
-      - name: Cambiar permisos de archivos de cobertura
-        run: sudo chmod -R a+rw "${{ steps.tests.outputs.coveragePath }}"
+      # - name: Cambiar permisos de archivos de cobertura
+      #   run: sudo chmod -R a+rw "${{ steps.tests.outputs.coveragePath }}"
 
-      - name: Ver permisos de la carpeta codeCoverage x2
-        run: ls -l ${{ steps.tests.outputs.coveragePath }}
+      # - name: Ver permisos de la carpeta codeCoverage x2
+      #   run: ls -l ${{ steps.tests.outputs.coveragePath }}
 
       # Mostrar contenido de editmode-artifacts
-      - name: Listar archivos y directorios de editmode-artifacts
-        run: ls -l ${{ steps.tests.outputs.artifactsPath }}
+      # - name: Listar archivos y directorios de editmode-artifacts
+      #   run: ls -l ${{ steps.tests.outputs.artifactsPath }}
         
       # Mostrar contenido de CodeCoverage
-      - name: Listar archivos y directorios de CodeCoverage
-        run: ls -l ${{ steps.tests.outputs.coveragePath }}
+      # - name: Listar archivos y directorios de CodeCoverage
+      #   run: ls -l ${{ steps.tests.outputs.coveragePath }}
 
       # Mostrar lista de workspace-opencov
-      - name: Mostrar contenido de la carpeta opencov
-        run: ls -l ${{ steps.tests.outputs.coveragePath }}/workspace-opencov/
+      # - name: Mostrar contenido de la carpeta opencov
+      #   run: ls -l ${{ steps.tests.outputs.coveragePath }}/workspace-opencov/
           
       # Cambiar el nombre de la carpeta
       - name: Cambiar nombre de la carpeta CodeCoverage
         run: mv CodeCoverage CodeCoverageRenamed
 
       # Mostrar lista de carpeta para ver si aparece CodeCoverageRenamed
-      - name: Comprobar si se renombro CodeCoverageRenamed 
-        run: ls -l
+      # - name: Comprobar si se renombro CodeCoverageRenamed 
+      #   run: ls -l
         
       # Mostrar contenido de CodeCoverageRenamed
-      - name: Listar archivos y directorios de CodeCoverage
-        run: ls -l CodeCoverageRenamed
+      # - name: Listar archivos y directorios de CodeCoverage
+      #   run: ls -l CodeCoverageRenamed
         
       # Coverage Artifacts
       - name: Almacenar resultados del CodeCoverage
@@ -133,7 +133,7 @@ jobs:
         if: always()
         with:
           name: Coverage results for ${{ matrix.testMode }}
-          path: CodeCoverageRenamed #${{ steps.tests.outputs.coveragePath }}
+          path: ${{ steps.tests.outputs.coveragePath }} #CodeCoverageRenamed
 
       # Test Artifacts
       - name: Almacenar resultados de las pruebas
