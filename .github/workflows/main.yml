@@ -30,31 +30,7 @@ jobs:
           key: Library-${{ matrix.projectPath }}
           restore-keys: |
             Library-
-            
-      # Mostrar archivos de la raiz para ver si se encuentra la carpeta CodeCoverage
-      - name: Listar archivos y directorios
-        run: ls -l
-        
-      # Comprobar si existe la carpeta CodeCoverage
-      # - name: Verificar si el directorio existe
-      #   run: |
-      #     if [ ! -d CodeCoverage ]; then
-      #       echo "El directorio no existe. Creándolo..."
-      #       mkdir CodeCoverage
-      #     else
-      #       echo "El directorio ya existe."
-      #     fi
 
-      # Mostrar archivos de la raiz para ver si se encuentra la carpeta CodeCoverage
-      # - name: Listar archivos y directorios
-      #   run: ls -l
-
-      # Intentar ver si es problema de permisos
-      # - name: Cambiar permisos de archivos de cobertura a usuario
-      #   run: sudo chown -R $USER:$USER "CodeCoverage"
-      # - name: Cambiar permisos de archivos de cobertura
-      #   run: sudo chmod -R a+rw "CodeCoverage"
-        
       # Test
       - name: Probando
         uses: game-ci/unity-test-runner@v4.3.1
@@ -70,71 +46,6 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*;dontClear'
-          
-      # Comprobar si existe la carpeta CodeCoverage
-      - name: Verificar si el directorio existe
-        run: |
-          if [ ! -d ${{ steps.tests.outputs.coveragePath }} ]; then
-            echo "El directorio no existe. Creándolo..."
-            mkdir ${{ steps.tests.outputs.coveragePath }}
-          else
-            echo "El directorio ya existe."
-          fi
-          
-      # Mostrar archivos de la raiz para ver si se encuentra la carpeta CodeCoverage
-      - name: Listar archivos y directorios
-        run: ls -l
-
-      - name: Ver permisos de la carpeta codeCoverage
-        run: stat ${{ steps.tests.outputs.coveragePath }}
-
-      - name: Ver permisos de la carpeta editmode
-        run: stat ${{ steps.tests.outputs.artifactsPath }}
-        
-      # # Intentar ver si es problema de permisos
-      # - name: Cambiar permisos de archivos de cobertura a usuario
-      #   run: sudo chown -R $USER:$USER "${{ steps.tests.outputs.coveragePath }}"
-      
-      # - name: Ver permisos de la carpeta codeCoverage x2
-      #   run: ls -l ${{ steps.tests.outputs.coveragePath }}
-        
-      # - name: Cambiar permisos de archivos de cobertura
-      #   run: sudo chmod -R a+rw "${{ steps.tests.outputs.coveragePath }}"
-
-      # - name: Ver permisos de la carpeta codeCoverage x2
-      #   run: ls -l ${{ steps.tests.outputs.coveragePath }}
-
-      # Mostrar contenido de editmode-artifacts
-      - name: Listar archivos y directorios de editmode-artifacts
-        run: ls -l ${{ steps.tests.outputs.artifactsPath }}
-        
-      # Mostrar contenido de CodeCoverage
-      - name: Listar archivos y directorios de CodeCoverage
-        run: ls -l ${{ steps.tests.outputs.coveragePath }}
-
-      # Mostrar lista de workspace-opencov
-      # - name: Mostrar contenido de la carpeta opencov
-      #   run: ls -l ${{ steps.tests.outputs.coveragePath }}/workspace-opencov/
-          
-      # Cambiar el nombre de la carpeta
-      # - name: Cambiar nombre de la carpeta CodeCoverage
-      #   run: mv CodeCoverage CodeCoverageRenamed
-
-      # Mostrar lista de carpeta para ver si aparece CodeCoverageRenamed
-      # - name: Comprobar si se renombro CodeCoverageRenamed 
-      #   run: ls -l
-        
-      # Mostrar contenido de CodeCoverageRenamed
-      # - name: Listar archivos y directorios de CodeCoverage
-      #   run: ls -l CodeCoverageRenamed
-        
-      # Packages Artifacts
-      - name: Almacenar Packages
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: Package-artifacts
-          path: Packages
 
       # Test Artifacts
       - name: Almacenar resultados de las pruebas
@@ -150,12 +61,4 @@ jobs:
         if: always()
         with:
           name: Coverage results for ${{ matrix.testMode }}
-          path: ${{ steps.tests.outputs.coveragePath }} #/workspace-opencov/EditMode #CodeCoverageRenamed
-        
-      - name: Almacenar resultados de las pruebas
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: Test results for ${{ matrix.testMode }} 2
-          path: ./
-          working-directory: ./CodeCoverage # Cambia esto al subdirectorio correcto
+          path: ${{ steps.tests.outputs.coveragePath }}
