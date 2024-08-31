@@ -85,14 +85,18 @@ jobs:
         run: ls -l
 
       - name: Ver permisos de la carpeta codeCoverage
-        run: ls -l ${{ steps.tests.outputs.coveragePath }}
+        run: stat ${{ steps.tests.outputs.coveragePath }}
 
       - name: Ver permisos de la carpeta editmode
-        run: ls -l ${{ steps.tests.outputs.artifactsPath }}
+        run: stat ${{ steps.tests.outputs.artifactsPath }}
         
       # Intentar ver si es problema de permisos
       - name: Cambiar permisos de archivos de cobertura a usuario
         run: sudo chown -R $USER:$USER "${{ steps.tests.outputs.coveragePath }}"
+      
+      - name: Ver permisos de la carpeta codeCoverage x2
+        run: ls -l ${{ steps.tests.outputs.coveragePath }}
+        
       - name: Cambiar permisos de archivos de cobertura
         run: sudo chmod -R a+rw "${{ steps.tests.outputs.coveragePath }}"
 
@@ -125,7 +129,7 @@ jobs:
         
       # Coverage Artifacts
       - name: Almacenar resultados del CodeCoverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: Coverage results for ${{ matrix.testMode }}
@@ -141,7 +145,7 @@ jobs:
 
       # Packages Artifacts
       - name: Almacenar Packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@4
         if: always()
         with:
           name: Package-artifacts
