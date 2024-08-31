@@ -49,10 +49,10 @@ jobs:
         run: ls -l
 
       # Intentar ver si es problema de permisos
-      - name: Cambiar permisos de archivos de cobertura
-        run: sudo chmod -R a+rw "CodeCoverage"
       - name: Cambiar permisos de archivos de cobertura a usuario
         run: sudo chown -R $USER:$USER "CodeCoverage"
+      - name: Cambiar permisos de archivos de cobertura
+        run: sudo chmod -R a+rw "CodeCoverage"
         
       # Test
       - name: Probando
@@ -85,10 +85,10 @@ jobs:
           fi
 
       # Intentar ver si es problema de permisos
-      - name: Cambiar permisos de archivos de cobertura
-        run: sudo chmod -R a+rw "${{ steps.tests.outputs.coveragePath }}"
       - name: Cambiar permisos de archivos de cobertura a usuario
         run: sudo chown -R $USER:$USER "${{ steps.tests.outputs.coveragePath }}"
+      - name: Cambiar permisos de archivos de cobertura
+        run: sudo chmod -R a+rw "${{ steps.tests.outputs.coveragePath }}"
 
       # Mostrar contenido de CodeCoverage
       - name: Listar archivos y directorios de CodeCoverage
@@ -114,10 +114,22 @@ jobs:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
           
+      # Cambiar el nombre de la carpeta
+      - name: Cambiar nombre de la carpeta CodeCoverage
+        run: mv CodeCoverage CodeCoverageRenamed
+
+      # Mostrar lista de carpeta para ver si aparece CodeCoverageRenamed
+      - name: Comprobar si se renombro CodeCoverageRenamed 
+        run: ls -l
+        
+      # Mostrar contenido de CodeCoverageRenamed
+      - name: Listar archivos y directorios de CodeCoverage
+        run: ls -l CodeCoverageRenamed
+        
       # Coverage Artifacts
       - name: Almacenar resultados del CodeCoverage
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Coverage results for ${{ matrix.testMode }}
-          path: ${{ steps.tests.outputs.coveragePath }}
+          path: CodeCoverageRenamed #${{ steps.tests.outputs.coveragePath }}
