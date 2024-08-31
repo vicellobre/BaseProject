@@ -116,8 +116,8 @@ jobs:
       #   run: ls -l ${{ steps.tests.outputs.coveragePath }}/workspace-opencov/
           
       # Cambiar el nombre de la carpeta
-      - name: Cambiar nombre de la carpeta CodeCoverage
-        run: mv CodeCoverage CodeCoverageRenamed
+      # - name: Cambiar nombre de la carpeta CodeCoverage
+      #   run: mv CodeCoverage CodeCoverageRenamed
 
       # Mostrar lista de carpeta para ver si aparece CodeCoverageRenamed
       # - name: Comprobar si se renombro CodeCoverageRenamed 
