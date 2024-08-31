@@ -70,7 +70,7 @@ jobs:
           checkName: ${{ matrix.testMode }} Test Results
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*;dontClear'
           
-            # Comprobar si existe la carpeta CodeCoverage
+      # Comprobar si existe la carpeta CodeCoverage
       - name: Verificar si el directorio existe
         run: |
           if [ ! -d ${{ steps.tests.outputs.coveragePath }} ]; then
@@ -141,7 +141,7 @@ jobs:
         if: always()
         with:
           name: Test results for ${{ matrix.testMode }}
-          path: ${{ steps.tests.outputs.artifactsPath }}
+          path: ${{ steps.tests.outputs.artifactsPath }}/workspace-opencov/EditMode
 
       # Packages Artifacts
       - name: Almacenar Packages
