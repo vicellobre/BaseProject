@@ -127,22 +127,6 @@ jobs:
       # - name: Listar archivos y directorios de CodeCoverage
       #   run: ls -l CodeCoverageRenamed
         
-      # Coverage Artifacts
-      - name: Almacenar resultados del CodeCoverage
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: Coverage results for ${{ matrix.testMode }}
-          path: ${{ steps.tests.outputs.coveragePath }} #CodeCoverageRenamed
-
-      # Test Artifacts
-      - name: Almacenar resultados de las pruebas
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: Test results for ${{ matrix.testMode }}
-          path: ${{ steps.tests.outputs.artifactsPath }}/workspace-opencov/EditMode
-
       # Packages Artifacts
       - name: Almacenar Packages
         uses: actions/upload-artifact@v4
@@ -150,3 +134,27 @@ jobs:
         with:
           name: Package-artifacts
           path: Packages
+
+      # Test Artifacts
+      - name: Almacenar resultados de las pruebas
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Test results for ${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
+  
+      # Coverage Artifacts
+      - name: Almacenar resultados del CodeCoverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Coverage results for ${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.coveragePath }}/workspace-opencov/EditMode #CodeCoverageRenamed
+        
+      - name: Almacenar resultados de las pruebas
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Test results for ${{ matrix.testMode }}
+          path: ./
+          working-directory: ./CodeCoverage # Cambia esto al subdirectorio correcto
