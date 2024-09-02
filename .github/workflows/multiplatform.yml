@@ -13,7 +13,7 @@ on:
     branches: [Dev, QA, main] # Trigger workflow on pull requests to specified branches
 
 concurrency: # Define concurrency group settings
-  group: ${{ github.ref }}-build-${{ matrix.targetPlatform }}-v${{ matrix.unityVersion }} # Group executions by ref, target platform, and Unity version
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }} # Group executions by ref, target platform, and Unity version
   cancel-in-progress: true # Cancel any in-progress jobs if a new one starts within the same group
 
 jobs:
