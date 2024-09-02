@@ -1,0 +1,315 @@
+name: Unity Project Template 🎮
+
+on:
+  workflow_dispatch: {} # Manual execution trigger
+    # inputs:
+    #   checksObject:
+    #     description: ''
+    #     required: false
+    #     default: ''
+  push:
+    branches: [Dev, main] # Trigger workflow on pushes to specified branches
+  pull_request:
+    branches: [Dev, QA, main] # Trigger workflow on pull requests to specified branches
+
+concurrency: # Define concurrency group settings
+  group: ${{ github.ref }}-build-${{ matrix.targetPlatform }}-v${{ matrix.unityVersion }} # Group executions by ref, target platform, and Unity version
+  cancel-in-progress: true # Cancel any in-progress jobs if a new one starts within the same group
+
+jobs:
+  TestsAndBuilds:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false # Continue running other jobs even if one fails
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        projectPath:
+          - ./ # When the project is in the root directory
+          # - test-project # When the project is in a subdirectory
+          # - test-package # When testing packages
+        unity_version: # Useful for testing migrations to different Unity versions
+          - 2022.3.15f1 
+          # - 2022.3.42f1
+        targetPlatform:
+          - iOS # Build an iOS player
+          - Android # Build an Android player
+          - WebGL # Build a WebGL player
+          - StandaloneLinux64 # Build a Linux 64-bit standalone player
+          - StandaloneWindows64 # Build a Windows 64-bit standalone player
+          - StandaloneOSX # Build a Mac standalone player
+        testMode: [playmode, editmode, all, standalone]
+        exclude: # Exclude unsupported platform and OS combinations
+          - targetPlatform: iOS
+            os: windows-latest
+          - targetPlatform: iOS
+            os: ubuntu-latest
+          - targetPlatform: Android
+            os: windows-latest
+          - targetPlatform: Android
+            os: macos-latest
+          - targetPlatform: WebGL
+            os: windows-latest
+          - targetPlatform: WebGL
+            os: macos-latest
+          - targetPlatform: StandaloneLinux64
+            os: windows-latest
+          - targetPlatform: StandaloneLinux64
+            os: macos-latest
+          - targetPlatform: StandaloneOSX
+            os: ubuntu-latest
+          - targetPlatform: StandaloneOSX
+            os: windows-latest
+          - targetPlatform: StandaloneWindows64
+            os: ubuntu-latest
+          - targetPlatform: StandaloneWindows64
+            os: macos-latest
+
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      
+    steps:
+      #############################
+      # Free Disk Space (Android) #
+      #############################
+      - name: Free Disk Space
+        if: matrix.targetPlatform == 'Android'
+        uses: jlumbroso/free-disk-space@v1.3.1
+        
+      ####################
+      # Checkout the Code #
+      ####################
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch the entire history to allow for better build caching
+          lfs: true # Enable Git LFS for large files
+
+      ############################
+      # Create Git LFS File List  #
+      ############################
+      - name: Create LFS File List
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      #####################
+      # Restore LFS Cache #
+      #####################
+      - name: Restore LFS Cache
+        uses: actions/cache@v4
+        id: lfs-cache
+        with:
+          path: .git/lfs
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      #################
+      # Git LFS Pull  #
+      #################
+      - name: Git LFS Pull
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
+
+      ###############################
+      # Restore Unity Library Cache #
+      ###############################
+      - name: Restore Library Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-v${{ matrix.unityVersion }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-v${{ matrix.unityVersion }}-
+            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
+            Library-${{ matrix.projectPath }}-
+            Library-
+
+      ######################################
+      # Set Scripting Backend to IL2CPP    #
+      ######################################
+      - name: Set Scripting Backend To IL2CPP
+        run: |
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            Move-Item -Path "${{ matrix.projectPath }}/ProjectSettings/ProjectSettingsIl2cpp.asset" -Destination "${{ matrix.projectPath }}/ProjectSettings/ProjectSettings.asset" -Force
+          else
+            mv -f "${{ matrix.projectPath }}/ProjectSettings/ProjectSettingsIl2cpp.asset" "${{ matrix.projectPath }}/ProjectSettings.asset"
+          fi
+        shell: bash
+
+      ###################
+      # Run Unity Tests #
+      ###################
+      - name: Run Unity Tests
+        id: testRunner
+        uses: game-ci/unity-test-runner@v4.3.1
+        with:
+          # General Configuration
+          unityVersion: ${{ matrix.unity_version }}
+          projectPath: ${{ matrix.projectPath }}
+          testMode: ${{ matrix.testMode }}
+          # Conditional Configuration
+          packageMode: ${{ github.event.inputs.projectPath == 'test-package' }}      
+          # Reporting and Artifacts
+          checkName: ${{ matrix.testMode }} Test Results
+          artifactsPath: ${{ matrix.testMode }}-artifacts
+          coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*;dontClear'
+          # Secrets and Tokens
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      ##################################
+      # Free Disk Space (Android Only) #
+      ##################################
+      - name: Free Disk Space
+        if: matrix.targetPlatform == 'Android'
+        uses: jlumbroso/free-disk-space@v1.3.1
+        
+      ########################
+      # Upload Test Results  #
+      ########################
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test-results-${{ matrix.testMode }}-${{ matrix.targetPlatform }}-v${{ matrix.unityVersion }}-${{ runner.os }}
+          path: ${{ steps.testRunner.outputs.artifactsPath }}
+
+        
+      #############################
+      # Upload Coverage Results   #
+      #############################
+      - name: Upload Coverage Results for ${{ matrix.testMode }} on ${{ runner.os }}
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Coverage-results-${{ matrix.testMode }}-${{ matrix.targetPlatform }}-v${{ matrix.unityVersion }}-${{ runner.os }}
+          path: ${{ steps.testRunner.outputs.coveragePath }}
+
+
+      ######################
+      # Build Unity Project #
+      ######################
+      - name: Build Unity Project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          buildName: 'Build-${{ matrix.unityVersion }}-${{ matrix.targetPlatform }}' # Custom build name including Unity version and target platform
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unity_version }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          allowDirtyBuild: true
+          # customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
+          
+      ##########################
+      # Upload Build Artifacts #
+      ##########################
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build-${{ matrix.unityVersion }}-${{ matrix.targetPlatform }}-${{ runner.os }}
+          path: build
+          
+      - name: Notifications
+        # Configure notifications (e.g., Slack, email) to receive alerts
+        
+  # buildAndroid:
+  #   needs: build
+  #   name: Build for Android
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       projectPath:
+  #         - ./
+  #       unity_version:
+  #         - 2022.3.15f1 
+  #       targetPlatform:
+  #         - Android
+  #   steps:
+  #     #####################
+  #     # Free Disk Space   #
+  #     #####################
+  #     - name: Free Disk Space
+  #       if: matrix.targetPlatform == 'Android'
+  #       uses: jlumbroso/free-disk-space@v1.3.1
+
+  #     #################
+  #     # Checkout Code #
+  #     #################
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 1 # Fetch full history for accurate cache key
+  #         lfs: true
+
+  #     ########################
+  #     # Create LFS File List #
+  #     ########################
+  #     - name: Create LFS File List
+  #       run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+  #     #####################
+  #     # Restore LFS Cache #
+  #     #####################
+  #     - name: Restore LFS Cache
+  #       uses: actions/cache@v4
+  #       id: lfs-cache
+  #       with:
+  #         path: .git/lfs
+  #         key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+  #     ################
+  #     # Git LFS Pull #
+  #     ################
+  #     - name: Git LFS Pull
+  #       run: |
+  #         git lfs pull
+  #         git add .
+  #         git reset --hard
+
+  #     ####################
+  #     # Restore Cache    #
+  #     ####################
+  #     - name: Restore Library Cache
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ${{ matrix.projectPath }}/Library
+  #         key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ matrix.unity_version }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+  #         restore-keys: |
+  #           Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ matrix.unity_version }}-
+  #           Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
+  #           Library-${{ matrix.projectPath }}-
+
+  #     #####################
+  #     # Build Android AAB #
+  #     #####################
+  #     - name: Build Android AAB
+  #       uses: game-ci/unity-builder@v4
+  #       env:
+  #         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  #         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+  #         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+  #       with:
+  #         buildName: 'AndroidAppBundle Build - ${{ matrix.unity_version }}'
+  #         projectPath: ${{ matrix.projectPath }}
+  #         unityVersion: ${{ matrix.unity_version }}
+  #         targetPlatform: Android
+  #         androidExportType: androidAppBundle
+  #         androidKeystoreName: user # This file won't exist, but this property needs to exist.
+  #         androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+  #         androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+  #         androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
+  #         androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
+  #         androidTargetSdkVersion: AndroidApiLevel35
+
+  #     ##################################
+  #     # Upload Android Build Artifacts #
+  #     ##################################
+  #     - name: Upload Android Build Artifacts
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: Android-App-Build-${{ matrix.unity_version }}-${{ runner.os }}
+  #         path: build/*.aab
