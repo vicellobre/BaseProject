@@ -44,25 +44,25 @@ jobs:
           # - standalone
         exclude: # Exclude unsupported platform and OS combinations
           - targetPlatform: iOS
-            os: windows-latest
+            os: windows-2022
           - targetPlatform: iOS
             os: macos-latest
           - targetPlatform: Android
-            os: windows-latest
+            os: windows-2022
           - targetPlatform: Android
             os: macos-latest
           - targetPlatform: WebGL
-            os: windows-latest
+            os: windows-2022
           - targetPlatform: WebGL
             os: macos-latest
           - targetPlatform: StandaloneLinux64
-            os: windows-latest
+            os: windows-2022
           - targetPlatform: StandaloneLinux64
             os: macos-latest
           - targetPlatform: StandaloneOSX
             os: ubuntu-latest
           - targetPlatform: StandaloneOSX
-            os: windows-latest
+            os: windows-2022
           - targetPlatform: StandaloneWindows64
             os: ubuntu-latest
           - targetPlatform: StandaloneWindows64
