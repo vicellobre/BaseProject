@@ -27,7 +27,7 @@ jobs:
           - ./ # When the project is in the root directory
           # - test-project # When the project is in a subdirectory
           # - test-package # When testing packages
-        unity_version: # Useful for testing migrations to different Unity versions
+        unityVersion: # Useful for testing migrations to different Unity versions
           - 2022.3.15f1 
           # - 2022.3.42f1
         targetPlatform:
@@ -145,7 +145,7 @@ jobs:
         uses: game-ci/unity-test-runner@v4.3.1
         with:
           # General Configuration
-          unityVersion: ${{ matrix.unity_version }}
+          unityVersion: ${{ matrix.unityVersion }}
           projectPath: ${{ matrix.projectPath }}
           testMode: ${{ matrix.testMode }}
           # Conditional Configuration
@@ -198,7 +198,7 @@ jobs:
         with:
           buildName: 'Build-${{ matrix.unityVersion }}-${{ matrix.targetPlatform }}' # Custom build name including Unity version and target platform
           projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unity_version }}
+          unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           allowDirtyBuild: true
           # customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
@@ -224,7 +224,7 @@ jobs:
   #     matrix:
   #       projectPath:
   #         - ./
-  #       unity_version:
+  #       unityVersion:
   #         - 2022.3.15f1 
   #       targetPlatform:
   #         - Android
@@ -277,9 +277,9 @@ jobs:
   #       uses: actions/cache@v4
   #       with:
   #         path: ${{ matrix.projectPath }}/Library
-  #         key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ matrix.unity_version }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+  #         key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
   #         restore-keys: |
-  #           Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ matrix.unity_version }}-
+  #           Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ matrix.unityVersion }}-
   #           Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
   #           Library-${{ matrix.projectPath }}-
 
@@ -293,9 +293,9 @@ jobs:
   #         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
   #         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
   #       with:
-  #         buildName: 'AndroidAppBundle Build - ${{ matrix.unity_version }}'
+  #         buildName: 'AndroidAppBundle Build - ${{ matrix.unityVersion }}'
   #         projectPath: ${{ matrix.projectPath }}
-  #         unityVersion: ${{ matrix.unity_version }}
+  #         unityVersion: ${{ matrix.unityVersion }}
   #         targetPlatform: Android
   #         androidExportType: androidAppBundle
   #         androidKeystoreName: user # This file won't exist, but this property needs to exist.
@@ -311,5 +311,5 @@ jobs:
   #     - name: Upload Android Build Artifacts
   #       uses: actions/upload-artifact@v4
   #       with:
-  #         name: Android-App-Build-${{ matrix.unity_version }}-${{ runner.os }}
+  #         name: Android-App-Build-${{ matrix.unityVersion }}-${{ runner.os }}
   #         path: build/*.aab
