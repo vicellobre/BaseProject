@@ -128,14 +128,14 @@ jobs:
       ######################################
       # Set Scripting Backend to IL2CPP    #
       ######################################
-      - name: Set Scripting Backend To IL2CPP
-        run: |
-          if [[ "${{ runner.os }}" == "Windows" ]]; then
-            Move-Item -Path "${{ matrix.projectPath }}ProjectSettings/ProjectSettingsIl2cpp.asset" -Destination "${{ matrix.projectPath }}/ProjectSettings/ProjectSettings.asset" -Force
-          else
-            mv -f "${{ matrix.projectPath }}ProjectSettings/ProjectSettingsIl2cpp.asset" "${{ matrix.projectPath }}/ProjectSettings.asset"
-          fi
-        shell: bash
+      # - name: Set Scripting Backend To IL2CPP
+      #   run: |
+      #     if [[ "${{ runner.os }}" == "Windows" ]]; then
+      #       Move-Item -Path "${{ matrix.projectPath }}ProjectSettings/ProjectSettingsIl2cpp.asset" -Destination "${{ matrix.projectPath }}/ProjectSettings/ProjectSettings.asset" -Force
+      #     else
+      #       mv -f "${{ matrix.projectPath }}ProjectSettings/ProjectSettingsIl2cpp.asset" "${{ matrix.projectPath }}/ProjectSettings.asset"
+      #     fi
+      #   shell: bash
 
       ###################
       # Run Unity Tests #
