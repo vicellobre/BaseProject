@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false # Continue running other jobs even if one fails
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-2022, ubuntu-latest, macos-latest]
         projectPath:
           - ./ # When the project is in the root directory
           # - test-project # When the project is in a subdirectory
@@ -131,9 +131,9 @@ jobs:
       - name: Set Scripting Backend To IL2CPP
         run: |
           if [[ "${{ runner.os }}" == "Windows" ]]; then
-            Move-Item -Path "${{ matrix.projectPath }}/ProjectSettings/ProjectSettingsIl2cpp.asset" -Destination "${{ matrix.projectPath }}/ProjectSettings/ProjectSettings.asset" -Force
+            Move-Item -Path "${{ matrix.projectPath }}ProjectSettings/ProjectSettingsIl2cpp.asset" -Destination "${{ matrix.projectPath }}/ProjectSettings/ProjectSettings.asset" -Force
           else
-            mv -f "${{ matrix.projectPath }}/ProjectSettings/ProjectSettingsIl2cpp.asset" "${{ matrix.projectPath }}/ProjectSettings.asset"
+            mv -f "${{ matrix.projectPath }}ProjectSettings/ProjectSettingsIl2cpp.asset" "${{ matrix.projectPath }}/ProjectSettings.asset"
           fi
         shell: bash
 
