@@ -11,6 +11,7 @@ jobs:
       matrix:
         projectPath:
           - ./
+        unityVersion: [2022.3.15f1]
         testMode:
          # - playmode
           - editmode
@@ -41,6 +42,7 @@ jobs:
         with:
           projectPath: ${{ matrix.projectPath }}
           testMode: ${{ matrix.testMode }}
+          unityVersion: ${{ matrix.unityVersion }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: ${{ matrix.testMode }} Test Results
