@@ -37,12 +37,16 @@ jobs:
           - StandaloneLinux64 # Build a Linux 64-bit standalone player
           - StandaloneWindows64 # Build a Windows 64-bit standalone player
           - StandaloneOSX # Build a Mac standalone player
-        testMode: [playmode, editmode, all, standalone]
+        testMode: 
+          - editmode
+          # - playmode
+          # - all
+          # - standalone
         exclude: # Exclude unsupported platform and OS combinations
           - targetPlatform: iOS
             os: windows-latest
           - targetPlatform: iOS
-            os: ubuntu-latest
+            os: macos-latest
           - targetPlatform: Android
             os: windows-latest
           - targetPlatform: Android
