@@ -212,7 +212,7 @@ jobs:
           name: Build-${{ matrix.unityVersion }}-${{ matrix.targetPlatform }}-${{ runner.os }}
           path: build
           
-      - name: Notifications
+      # - name: Notifications
         # Configure notifications (e.g., Slack, email) to receive alerts
         
   # buildAndroid:
