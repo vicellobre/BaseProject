@@ -18,7 +18,7 @@ concurrency: # Define concurrency group settings
 
 jobs:
   Test:
-    name: 🧪 Test for ${ matrix.targetPlatform }} 🧪
+    name: 🧪 Test for ${{ matrix.targetPlatform }} 🧪
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false # Continue running other jobs even if one fails
@@ -89,18 +89,18 @@ jobs:
         if: matrix.targetPlatform == 'Android' || matrix.targetPlatform == 'WebGL'
         uses: jlumbroso/free-disk-space@v1.3.1
         
-      ####################
+      #####################
       # Checkout the Code #
-      ####################
+      #####################
       - name: 📥 Checkout Code 📥
         uses: actions/checkout@v4
         with:
           fetch-depth: ${{ matrix.targetPlatform == 'WebGL' && 1 || 0 }} # Fetch the entire history to allow for better build caching
           lfs: true # Enable Git LFS for large files
 
-      ############################
+      #############################
       # Create Git LFS File List  #
-      ############################
+      #############################
       - name: 📝🗂️ Create LFS File List 🗂️📝
         run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
 
@@ -323,13 +323,13 @@ jobs:
       #####################################
       # Free Disk Space (Android & WebGL) #
       #####################################
-      # - name: 🧹🗑️ Free Disk Space 🗑️🧹
-      #   if: matrix.targetPlatform == 'Android' || matrix.targetPlatform == 'WebGL'
-      #   uses: jlumbroso/free-disk-space@v1.3.1
+      - name: 🧹🗑️ Free Disk Space 🗑️🧹
+        if: matrix.targetPlatform == 'Android' || matrix.targetPlatform == 'WebGL'
+        uses: jlumbroso/free-disk-space@v1.3.1
 
-      ######################
+      #######################
       # Build Unity Project #
-      ######################
+      #######################
       - name:  🏗️ Build Unity Project 🏗️
         uses: game-ci/unity-builder@v4
         env:
@@ -420,6 +420,12 @@ jobs:
   #           Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
   #           Library-${{ matrix.projectPath }}-
 
+  #     #####################
+  #     # Free Disk Space   #
+  #     #####################
+  #     - name: 🧹🗑️ Free Disk Space 🗑️🧹
+  #       uses: jlumbroso/free-disk-space@v1.3.1
+  
   #     ############################
   #     # Build Android App Bundle #
   #     ############################
