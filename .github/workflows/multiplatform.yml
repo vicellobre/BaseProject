@@ -22,7 +22,10 @@ jobs:
     strategy:
       fail-fast: false # Continue running other jobs even if one fails
       matrix:
-        os: [windows-2022, ubuntu-latest, macos-latest]
+        os: 
+        - windows-2022
+        - ubuntu-latest
+        - macos-latest
         projectPath:
           - ./ # When the project is in the root directory
           # - test-project # When the project is in a subdirectory
@@ -67,6 +70,10 @@ jobs:
             os: ubuntu-latest
           - targetPlatform: StandaloneWindows64
             os: macos-latest
+          # debug
+          - targetPlatform: iOs
+          - targetPlatform: StandaloneOSX
+          - os: macos-latest
 
     env:
       UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
