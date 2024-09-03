@@ -18,7 +18,7 @@ concurrency: # Define concurrency group settings
 
 jobs:
   Test:
-    if: ${{ github.event_name == 'pull_request' }}
+    # if: ${{ github.event_name == 'pull_request' }}
     name: 🧪 Test of ${{ matrix.testMode }} for ${{ matrix.targetPlatform }} on ${{ matrix.os }} with ${{ matrix.unityVersion }} 🧪
     runs-on: ${{ matrix.os }}
     strategy:
@@ -189,7 +189,7 @@ jobs:
       # - name: Notifications
         # Configure notifications (e.g., Slack, email) to receive alerts
   Build:
-    if: ${{ github.event_name == 'push' }}
+    # if: ${{ github.event_name == 'push' }}
     needs: Test
     name: 🛠️ Build for ${{ matrix.targetPlatform }} on ${{ matrix.os }} with ${{ matrix.unityVersion }} 🛠️
     runs-on: ${{ matrix.os }}
