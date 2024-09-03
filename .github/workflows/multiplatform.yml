@@ -1,4 +1,4 @@
-name: 🎮 Unity Project 🎮
+name: 🎮🖥️ Unity Project 🖥️🎮
 
 on:
   workflow_dispatch: {} # Manual execution trigger
