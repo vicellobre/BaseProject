@@ -81,11 +81,11 @@ jobs:
       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       
     steps:
-      #############################
-      # Free Disk Space (Android) #
-      #############################
+      #####################################
+      # Free Disk Space (Android & WebGL) #
+      #####################################
       - name: Free Disk Space
-        if: matrix.targetPlatform == 'Android'
+        if: matrix.targetPlatform == 'Android' || matrix.targetPlatform == 'WebGL'
         uses: jlumbroso/free-disk-space@v1.3.1
         
       ####################
@@ -168,11 +168,11 @@ jobs:
           # Secrets and Tokens
           githubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      ##################################
-      # Free Disk Space (Android Only) #
-      ##################################
+      #####################################
+      # Free Disk Space (Android & WebGL) #
+      #####################################
       - name: Free Disk Space
-        if: matrix.targetPlatform == 'Android'
+        if: matrix.targetPlatform == 'Android' || matrix.targetPlatform == 'WebGL'
         uses: jlumbroso/free-disk-space@v1.3.1
         
       ########################
