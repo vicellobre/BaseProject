@@ -18,7 +18,7 @@ concurrency: # Define concurrency group settings
 
 jobs:
   Test:
-    name: 🧪 Test for ${{ matrix.targetPlatform }} 🧪
+    name: 🧪 Test of ${{ matrix.testMode }} for ${{ matrix.targetPlatform }} on ${{ runner.os }} with ${{ matrix.unityVersion }} 🧪
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false # Continue running other jobs even if one fails
@@ -189,7 +189,7 @@ jobs:
         # Configure notifications (e.g., Slack, email) to receive alerts
   Build:
     needs: Test
-    name: 🛠️ Build for ${{ matrix.targetPlatform }} 🛠️
+    name: 🛠️ Build for ${{ matrix.targetPlatform }} on ${{ runner.os }} with ${{ matrix.unityVersion }} 🛠️
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false # Continue running other jobs even if one fails
@@ -266,7 +266,7 @@ jobs:
       - name: 📥 Checkout Code 📥
         uses: actions/checkout@v4
         with:
-          fetch-depth: ${{ matrix.targetPlatform == 'WebGL' && 1 || 0 }} # Fetch the entire history to allow for better build caching
+          fetch-depth: 0 #${{ matrix.targetPlatform == 'WebGL' && 1 || 0 }} # Fetch the entire history to allow for better build caching
           lfs: true # Enable Git LFS for large files
 
       ############################
