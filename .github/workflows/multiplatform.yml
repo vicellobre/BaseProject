@@ -94,7 +94,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch the entire history to allow for better build caching
+          fetch-depth: ${{ matrix.targetPlatform == 'WebGL' && 1 || 0 }} # Fetch the entire history to allow for better build caching
           lfs: true # Enable Git LFS for large files
 
       ############################
