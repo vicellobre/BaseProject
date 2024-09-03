@@ -189,7 +189,7 @@ jobs:
         # Configure notifications (e.g., Slack, email) to receive alerts
   Build:
     needs: Test
-    name: 🛠️ Build for ${{ matrix.targetPlatform }} on ${{ runner.os }} with ${{ matrix.unityVersion }} 🛠️
+    name: 🛠️ Build for ${{ matrix.targetPlatform }} on ${{ matrix.os }} with ${{ matrix.unityVersion }} 🛠️
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false # Continue running other jobs even if one fails
