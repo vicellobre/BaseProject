@@ -18,7 +18,7 @@ concurrency: # Define concurrency group settings
 
 jobs:
   Test:
-    name: 🧪 Test of ${{ matrix.testMode }} for ${{ matrix.targetPlatform }} on ${{ runner.os }} with ${{ matrix.unityVersion }} 🧪
+    name: 🧪 Test of ${{ matrix.testMode }} for ${{ matrix.targetPlatform }} on ${{ matrix.os }} with ${{ matrix.unityVersion }} 🧪
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false # Continue running other jobs even if one fails
