@@ -179,7 +179,7 @@ jobs:
       #############################
       # Upload Coverage Results   #
       #############################
-      - name: 📤📊 Upload Coverage Results for ${{ matrix.testMode }} on ${{ runner.os }} 📊📤
+      - name: 📤📊 Upload Coverage Results 📊📤
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -332,7 +332,7 @@ jobs:
       #######################
       # Build Unity Project #
       #######################
-      - name:  🏗️ Build Unity Project 🏗️
+      - name:  🏗️1️⃣ Build Unity Project 1️⃣🏗️
         uses: game-ci/unity-builder@v4
         id: build-1
         continue-on-error: true
@@ -347,13 +347,19 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           allowDirtyBuild: true
           # customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
-          
-      - name: Sleep for Retry
+
+      ###################
+      # Sleep for Retry #
+      ###################
+      - name: 🕰️ Sleep for Retry 🕰️
         if: ${{ steps.build-1.outcome == 'failure' }}
         run: |
           sleep 60
 
-      - name:  🏗️ Build Unity Project (Retry 1) 🏗️
+      #################################
+      # Build Unity Project (Retry 1) #
+      #################################
+      - name:  🏗️2️⃣ Build Unity Project 2️⃣🏗️
         uses: game-ci/unity-builder@v4
         id: build-2
         if: ${{ steps.build-1.outcome == 'failure' }}
@@ -370,16 +376,21 @@ jobs:
           allowDirtyBuild: true
           # customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
 
-      - name: Sleep for Retry
+      ###################
+      # Sleep for Retry #
+      ###################
+      - name: 🕰️ Sleep for Retry 🕰️
         if: ${{ steps.build-1.outcome == 'failure' && steps.build-2.outcome == 'failure' }}
         run: |
           sleep 240
 
-      - name:  🏗️ Build Unity Project (Retry 2) 🏗️
+      #################################
+      # Build Unity Project (Retry 2) #
+      #################################
+      - name:  🏗️3️⃣ Build Unity Project 3️⃣🏗️
         uses: game-ci/unity-builder@v4
         id: build-3
         if: ${{ steps.build-1.outcome == 'failure' && steps.build-2.outcome == 'failure' }}
-        continue-on-error: true
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
