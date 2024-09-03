@@ -1,4 +1,4 @@
-name: Unity Project Template 🎮
+name: 🎮 Unity Project 🎮
 
 on:
   workflow_dispatch: {} # Manual execution trigger
@@ -17,7 +17,8 @@ concurrency: # Define concurrency group settings
   cancel-in-progress: true # Cancel any in-progress jobs if a new one starts within the same group
 
 jobs:
-  TestsAndBuilds:
+  Test:
+    name: 🧪 Test for ${ matrix.targetPlatform }} 🧪
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false # Continue running other jobs even if one fails
@@ -84,14 +85,14 @@ jobs:
       #####################################
       # Free Disk Space (Android & WebGL) #
       #####################################
-      - name: Free Disk Space
+      - name: 🧹🗑️ Free Disk Space 🗑️🧹
         if: matrix.targetPlatform == 'Android' || matrix.targetPlatform == 'WebGL'
         uses: jlumbroso/free-disk-space@v1.3.1
         
       ####################
       # Checkout the Code #
       ####################
-      - name: Checkout Code
+      - name: 📥 Checkout Code 📥
         uses: actions/checkout@v4
         with:
           fetch-depth: ${{ matrix.targetPlatform == 'WebGL' && 1 || 0 }} # Fetch the entire history to allow for better build caching
@@ -100,13 +101,13 @@ jobs:
       ############################
       # Create Git LFS File List  #
       ############################
-      - name: Create LFS File List
+      - name: 📝🗂️ Create LFS File List 🗂️📝
         run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
 
       #####################
       # Restore LFS Cache #
       #####################
-      - name: Restore LFS Cache
+      - name: ♻️📦 Restore LFS Cache ♻️📦
         uses: actions/cache@v4
         id: lfs-cache
         with:
@@ -116,7 +117,7 @@ jobs:
       #################
       # Git LFS Pull  #
       #################
-      - name: Git LFS Pull
+      - name: 🔄 Git LFS Pull 🔄
         run: |
           git lfs pull
           git add .
@@ -125,7 +126,7 @@ jobs:
       ###############################
       # Restore Unity Library Cache #
       ###############################
-      - name: Restore Library Cache
+      - name: ♻️📦 Restore Library Cache 📦♻️
         uses: actions/cache@v4
         with:
           path: ${{ matrix.projectPath }}/Library
@@ -136,22 +137,10 @@ jobs:
             Library-${{ matrix.projectPath }}-
             Library-
 
-      ######################################
-      # Set Scripting Backend to IL2CPP    #
-      ######################################
-      # - name: Set Scripting Backend To IL2CPP
-      #   run: |
-      #     if [[ "${{ runner.os }}" == "Windows" ]]; then
-      #       Move-Item -Path "${{ matrix.projectPath }}ProjectSettings/ProjectSettingsIl2cpp.asset" -Destination "${{ matrix.projectPath }}/ProjectSettings/ProjectSettings.asset" -Force
-      #     else
-      #       mv -f "${{ matrix.projectPath }}ProjectSettings/ProjectSettingsIl2cpp.asset" "${{ matrix.projectPath }}/ProjectSettings.asset"
-      #     fi
-      #   shell: bash
-
       ###################
       # Run Unity Tests #
       ###################
-      - name: Run Unity Tests
+      - name: ✅ Run Unity Tests ✅
         id: testRunner
         uses: game-ci/unity-test-runner@v4.3.1
         with:
@@ -171,14 +160,14 @@ jobs:
       #####################################
       # Free Disk Space (Android & WebGL) #
       #####################################
-      - name: Free Disk Space
-        if: matrix.targetPlatform == 'Android' || matrix.targetPlatform == 'WebGL'
-        uses: jlumbroso/free-disk-space@v1.3.1
+      # - name: 🧹🗑️ Free Disk Space 🗑️🧹
+      #   if: matrix.targetPlatform == 'Android' || matrix.targetPlatform == 'WebGL'
+      #   uses: jlumbroso/free-disk-space@v1.3.1
         
       ########################
       # Upload Test Results  #
       ########################
-      - name: Upload Test Results
+      - name: 📤📊 Upload Test Results 📊📤
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -189,18 +178,159 @@ jobs:
       #############################
       # Upload Coverage Results   #
       #############################
-      - name: Upload Coverage Results for ${{ matrix.testMode }} on ${{ runner.os }}
+      - name: 📤📊 Upload Coverage Results for ${{ matrix.testMode }} on ${{ runner.os }} 📊📤
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Coverage-results-${{ matrix.testMode }}-${{ matrix.targetPlatform }}-v${{ matrix.unityVersion }}-${{ runner.os }}
           path: ${{ steps.testRunner.outputs.coveragePath }}
+          
+      # - name: Notifications
+        # Configure notifications (e.g., Slack, email) to receive alerts
+  Build:
+    needs: Test
+    name: 🛠️ Build for ${{ matrix.targetPlatform }} 🛠️
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false # Continue running other jobs even if one fails
+      matrix:
+        os: 
+        - windows-2022
+        - ubuntu-latest
+        - macos-latest
+        projectPath:
+          - ./ # When the project is in the root directory
+          # - test-project # When the project is in a subdirectory
+          # - test-package # When testing packages
+        unityVersion: # Useful for testing migrations to different Unity versions
+          - 2022.3.15f1 
+          # - 2022.3.42f1
+        targetPlatform:
+          - iOS # Build an iOS player
+          - Android # Build an Android player
+          - WebGL # Build a WebGL player
+          - StandaloneLinux64 # Build a Linux 64-bit standalone player
+          - StandaloneWindows64 # Build a Windows 64-bit standalone player
+          - StandaloneOSX # Build a Mac standalone player
+        testMode: 
+          - editmode
+          # - playmode
+          # - all
+          # - standalone
+        exclude: # Exclude unsupported platform and OS combinations
+          - targetPlatform: iOS
+            os: windows-2022
+          - targetPlatform: iOS
+            os: macos-latest
+          - targetPlatform: Android
+            os: windows-2022
+          - targetPlatform: Android
+            os: macos-latest
+          - targetPlatform: WebGL
+            os: windows-2022
+          - targetPlatform: WebGL
+            os: macos-latest
+          - targetPlatform: StandaloneLinux64
+            os: windows-2022
+          - targetPlatform: StandaloneLinux64
+            os: macos-latest
+          - targetPlatform: StandaloneOSX
+            os: ubuntu-latest
+          - targetPlatform: StandaloneOSX
+            os: windows-2022
+          - targetPlatform: StandaloneWindows64
+            os: ubuntu-latest
+          - targetPlatform: StandaloneWindows64
+            os: macos-latest
+          # debug
+          - targetPlatform: iOs
+          - targetPlatform: StandaloneOSX
+          - os: macos-latest
 
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      
+    steps:
+      #####################################
+      # Free Disk Space (Android & WebGL) #
+      #####################################
+      - name: 🧹🗑️  Free Disk Space 🗑️🧹
+        if: matrix.targetPlatform == 'Android' || matrix.targetPlatform == 'WebGL'
+        uses: jlumbroso/free-disk-space@v1.3.1
+        
+      #####################
+      # Checkout the Code #
+      #####################
+      - name: 📥 Checkout Code 📥
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ matrix.targetPlatform == 'WebGL' && 1 || 0 }} # Fetch the entire history to allow for better build caching
+          lfs: true # Enable Git LFS for large files
+
+      ############################
+      # Create Git LFS File List #
+      ############################
+      - name: 📝🗂️ Create LFS File List 🗂️📝
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      #####################
+      # Restore LFS Cache #
+      #####################
+      - name: ♻️📦 Restore LFS Cache ♻️📦
+        uses: actions/cache@v4
+        id: lfs-cache
+        with:
+          path: .git/lfs
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      #################
+      # Git LFS Pull  #
+      #################
+      - name: 🔄 Git LFS Pull 🔄
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
+
+      ###############################
+      # Restore Unity Library Cache #
+      ###############################
+      - name: ♻️📦 Restore Library Cache 📦♻️
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-v${{ matrix.unityVersion }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-v${{ matrix.unityVersion }}-
+            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
+            Library-${{ matrix.projectPath }}-
+            Library-
+
+      ######################################
+      # Set Scripting Backend to IL2CPP    #
+      ######################################
+      # - name: ⚙️ Set Scripting Backend To IL2CPP ⚙️
+      #   run: |
+      #     if [[ "${{ runner.os }}" == "Windows" ]]; then
+      #       Move-Item -Path "${{ matrix.projectPath }}ProjectSettings/ProjectSettingsIl2cpp.asset" -Destination "${{ matrix.projectPath }}/ProjectSettings/ProjectSettings.asset" -Force
+      #     else
+      #       mv -f "${{ matrix.projectPath }}ProjectSettings/ProjectSettingsIl2cpp.asset" "${{ matrix.projectPath }}/ProjectSettings.asset"
+      #     fi
+      #   shell: bash
+    
+      #####################################
+      # Free Disk Space (Android & WebGL) #
+      #####################################
+      # - name: 🧹🗑️ Free Disk Space 🗑️🧹
+      #   if: matrix.targetPlatform == 'Android' || matrix.targetPlatform == 'WebGL'
+      #   uses: jlumbroso/free-disk-space@v1.3.1
 
       ######################
       # Build Unity Project #
       ######################
-      - name: Build Unity Project
+      - name:  🏗️ Build Unity Project 🏗️
         uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -217,18 +347,15 @@ jobs:
       ##########################
       # Upload Build Artifacts #
       ##########################
-      - name: Upload Build Artifacts
+      - name: 📤📦 Upload Build Artifacts 📦📤
         uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.unityVersion }}-${{ matrix.targetPlatform }}-${{ runner.os }}
           path: build
           
-      # - name: Notifications
-        # Configure notifications (e.g., Slack, email) to receive alerts
-        
   # buildAndroid:
-  #   needs: build
-  #   name: Build for Android
+  #   needs: Test
+  #   name: 🤖📱 Build for Android App Bundle 📱🤖
   #   runs-on: ubuntu-latest
   #   strategy:
   #     fail-fast: false
@@ -243,14 +370,13 @@ jobs:
   #     #####################
   #     # Free Disk Space   #
   #     #####################
-  #     - name: Free Disk Space
-  #       if: matrix.targetPlatform == 'Android'
+  #     - name: 🧹🗑️ Free Disk Space 🗑️🧹
   #       uses: jlumbroso/free-disk-space@v1.3.1
 
   #     #################
   #     # Checkout Code #
   #     #################
-  #     - name: Checkout Code
+  #     - name: 📥 Checkout Code 📥
   #       uses: actions/checkout@v4
   #       with:
   #         fetch-depth: 1 # Fetch full history for accurate cache key
@@ -259,13 +385,13 @@ jobs:
   #     ########################
   #     # Create LFS File List #
   #     ########################
-  #     - name: Create LFS File List
+  #     - name: 📝🗂️ Create LFS File List 🗂️📝
   #       run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
 
   #     #####################
   #     # Restore LFS Cache #
   #     #####################
-  #     - name: Restore LFS Cache
+  #     - name: ♻️📦 Restore LFS Cache ♻️📦
   #       uses: actions/cache@v4
   #       id: lfs-cache
   #       with:
@@ -275,7 +401,7 @@ jobs:
   #     ################
   #     # Git LFS Pull #
   #     ################
-  #     - name: Git LFS Pull
+  #     - name: 🔄 Git LFS Pull 🔄
   #       run: |
   #         git lfs pull
   #         git add .
@@ -284,7 +410,7 @@ jobs:
   #     ####################
   #     # Restore Cache    #
   #     ####################
-  #     - name: Restore Library Cache
+  #     - name: ♻️📦 Restore Library Cache 📦♻️
   #       uses: actions/cache@v4
   #       with:
   #         path: ${{ matrix.projectPath }}/Library
@@ -294,10 +420,10 @@ jobs:
   #           Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
   #           Library-${{ matrix.projectPath }}-
 
-  #     #####################
-  #     # Build Android AAB #
-  #     #####################
-  #     - name: Build Android AAB
+  #     ############################
+  #     # Build Android App Bundle #
+  #     ############################
+  #     - name: 🏗️🤖 Build for Android App Bundle 🏗️🤖
   #       uses: game-ci/unity-builder@v4
   #       env:
   #         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -319,7 +445,7 @@ jobs:
   #     ##################################
   #     # Upload Android Build Artifacts #
   #     ##################################
-  #     - name: Upload Android Build Artifacts
+  #     - name: 📤📦 Upload Android App Bundle Build Artifacts 📦📤
   #       uses: actions/upload-artifact@v4
   #       with:
   #         name: Android-App-Build-${{ matrix.unityVersion }}-${{ runner.os }}
