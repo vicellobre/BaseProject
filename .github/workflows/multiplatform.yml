@@ -334,6 +334,52 @@ jobs:
       #######################
       - name:  🏗️ Build Unity Project 🏗️
         uses: game-ci/unity-builder@v4
+        id: build-1
+        continue-on-error: true
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          buildName: 'Build-${{ matrix.unityVersion }}-${{ matrix.targetPlatform }}' # Custom build name including Unity version and target platform
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          allowDirtyBuild: true
+          # customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
+          
+      - name: Sleep for Retry
+        if: ${{ steps.build-1.outcome == 'failure' }}
+        run: |
+          sleep 60
+
+      - name:  🏗️ Build Unity Project (Retry 1) 🏗️
+        uses: game-ci/unity-builder@v4
+        id: build-2
+        if: ${{ steps.build-1.outcome == 'failure' }}
+        continue-on-error: true
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          buildName: 'Build-${{ matrix.unityVersion }}-${{ matrix.targetPlatform }}' # Custom build name including Unity version and target platform
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          allowDirtyBuild: true
+          # customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
+
+      - name: Sleep for Retry
+        if: ${{ steps.build-1.outcome == 'failure' && steps.build-2.outcome == 'failure' }}
+        run: |
+          sleep 240
+
+      - name:  🏗️ Build Unity Project (Retry 2) 🏗️
+        uses: game-ci/unity-builder@v4
+        id: build-3
+        if: ${{ steps.build-1.outcome == 'failure' && steps.build-2.outcome == 'failure' }}
+        continue-on-error: true
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
