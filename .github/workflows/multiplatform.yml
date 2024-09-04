@@ -1,7 +1,7 @@
 name: 🎮🖥️ Unity Project 🖥️🎮
 
 on:
-  workflow_dispatch: #{} # Manual execution trigger
+  workflow_dispatch: # {} # Manual execution trigger
     inputs:
       run-test:
         description: 'Run Tests'
