@@ -43,9 +43,9 @@ jobs:
           - StandaloneWindows64 # Build a Windows 64-bit standalone player
           - StandaloneOSX # Build a Mac standalone player
         testMode: 
-          - editmode
+          # - editmode
           # - playmode
-          # - all
+          - all
           # - standalone
         exclude: # Exclude unsupported platform and OS combinations
           - targetPlatform: iOS
