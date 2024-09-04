@@ -1,20 +1,20 @@
 name: 🎮🖥️ Unity Project 🖥️🎮
 
 on:
-  workflow_dispatch: {} # Manual execution trigger
-    # inputs:
-      # run-test:
-      #   description: 'Run Tests'
-      #   required: true
-      #   default: true
-      # run-build:
-      #   description: 'Run Builds'
-      #   required: true
-      #   default: false
-      # run-deploy:
-      #   description: 'Run Deploy'
-      #   required: true
-      #   default: false
+  workflow_dispatch: #{} # Manual execution trigger
+    inputs:
+      run-test:
+        description: 'Run Tests'
+        required: true
+        default: true
+      run-build:
+        description: 'Run Builds'
+        required: true
+        default: false
+      run-deploy:
+        description: 'Run Deploy'
+        required: true
+        default: false
   push:
     branches: [QA, Prod, main] # Trigger workflow on pushes to specified branches
   pull_request:
@@ -197,8 +197,8 @@ jobs:
       # - name: Notifications
         # Configure notifications (e.g., Slack, email) to receive alerts
   Build:
-    # if: ${{ github.ref == 'refs/heads/QA' || github.event.inputs.run-build == 'true' }}
-    needs: Test
+    if: ${{ github.ref == 'refs/heads/QA' || github.event.inputs.run-build == 'true' }}
+    # needs: Test
     name: 🛠️ Build for ${{ matrix.targetPlatform }} on ${{ matrix.os }} with ${{ matrix.unityVersion }} 🛠️
     runs-on: ${{ matrix.os }}
     strategy:
