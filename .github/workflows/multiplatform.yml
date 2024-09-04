@@ -4,11 +4,11 @@ on:
   workflow_dispatch: # {} # Manual execution trigger
     inputs:
       run-test:
-        description: 'Run Tests'
+        description: 'Run Test'
         required: false
         default: false
       run-build:
-        description: 'Run Builds'
+        description: 'Run Build'
         required: true
         default: true
       run-deploy:
