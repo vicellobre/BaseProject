@@ -16,7 +16,7 @@ on:
         required: true
         default: false
   push:
-    branches: [QA, Prod, main] # Trigger workflow on pushes to specified branches
+    branches: [Dev, QA, Prod, main] # Trigger workflow on pushes to specified branches
   pull_request:
     branches: [Dev] # Trigger workflow on pull requests to specified branches
 
@@ -26,7 +26,7 @@ concurrency: # Define concurrency group settings
 
 jobs:
   Test:
-    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'dev' }} # || github.event.inputs.run-test == 'true' }}
+    # if: ${{ github.event_name == 'pull_request' && github.base_ref == 'dev' }} # || github.event.inputs.run-test == 'true' }}
     name: 🧪 Test of ${{ matrix.testMode }} for ${{ matrix.targetPlatform }} on ${{ matrix.os }} with ${{ matrix.unityVersion }} 🧪
     runs-on: ${{ matrix.os }}
     strategy:
@@ -196,8 +196,9 @@ jobs:
           
       # - name: Notifications
         # Configure notifications (e.g., Slack, email) to receive alerts
+        
   Build:
-    if: ${{ github.ref == 'refs/heads/QA' || github.event.inputs.run-build == 'true' }}
+    # if: ${{ github.ref == 'refs/heads/QA' || github.event.inputs.run-build == 'true' }}
     # needs: Test
     name: 🛠️ Build for ${{ matrix.targetPlatform }} on ${{ matrix.os }} with ${{ matrix.unityVersion }} 🛠️
     runs-on: ${{ matrix.os }}
