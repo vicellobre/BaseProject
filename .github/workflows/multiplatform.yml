@@ -5,12 +5,12 @@ on:
     inputs:
       run-test:
         description: 'Run Tests'
-        required: true
-        default: true
+        required: false
+        default: false
       run-build:
         description: 'Run Builds'
         required: true
-        default: false
+        default: true
       run-deploy:
         description: 'Run Deploy'
         required: true
