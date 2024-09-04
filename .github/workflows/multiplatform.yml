@@ -26,7 +26,7 @@ concurrency: # Define concurrency group settings
 
 jobs:
   Test:
-    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'dev' || ${{ github.event.inputs.run-test == 'true' }}
+    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'dev' || github.event.inputs.run-test == 'true' }}
     name: 🧪 Test of ${{ matrix.testMode }} for ${{ matrix.targetPlatform }} on ${{ matrix.os }} with ${{ matrix.unityVersion }} 🧪
     runs-on: ${{ matrix.os }}
     strategy:
